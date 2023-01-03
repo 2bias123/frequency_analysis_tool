@@ -1,9 +1,12 @@
-use std::{fs::File, io::BufReader, collections::BTreeMap};
-use clap::Parser;
-use most_common_substring::common_substring;
+use std::{fs::File, io::{BufReader, self}, collections::BTreeMap};
+use clap::{Parser};
+
+use crate::most_common_substring::common_substring;
+use crate::do_both::do_both;
 
 mod letter_occurrence;
 mod most_common_substring;
+mod do_both;
 
 #[derive(Parser)]
 struct CLI {
@@ -23,25 +26,59 @@ fn main() {
 
     let file = BufReader::new(file);
 
-    // let substrings = common_substring(file,3);
+    let mut user_input = String::new();
 
-    // println!("{:?}",substrings);
+    println!("What do you want to do with this file?");
+    println!("1: Find the most common chars");
+    println!("2: Find the most common three-letter substrings");
+    println!("3: Do both!");
 
-    let occurrences = letter_occurrence::letter_occurence(file);
-    let wc:u32 = occurrences.0;
-    println!("The number of characters without spaces is: {}",&wc);
+    io::stdin().read_line(&mut user_input).expect("Couldnt read line");
+    let number: i32 = user_input.trim().parse().expect("Please type one of the given numbers");
 
-    print_occurences(&occurrences.1);
+    if number == 1 {
+        let (wc,occurrences) = letter_occurrence::letter_occurence(file);
+    
+        println!("The number of characters without spaces is: {}",&wc);
 
-    println!("========================================");
+        print_occurences(&occurrences);
 
-    print_percentage(&occurrences.1, wc);
+        println!("========================================");
+
+        print_percentage(&occurrences, wc);
+        
+    } else if number == 2 {
+        let substrings = common_substring(file,3);
+
+        println!("{:?}",substrings);
+    } else if number == 3{
+        let (wc,letter_occurrences,most_common_substring)
+        = do_both(file,3);
+
+        
+        println!("The number of characters without spaces is: {}",&wc);
+
+        print_occurences(&letter_occurrences);
+
+        println!("========================================");
+
+        print_percentage(&letter_occurrences, wc);
+
+        println!("========================================");
+
+        print_occurences(&most_common_substring);
+
+    }
+    
    
 }
 
-fn print_occurences(occurrence: &BTreeMap<char, u32>) {
-    for (key,value) in occurrence{
-        println!("{key}: {value}");
+fn print_occurences<T>(occurrence: &BTreeMap<T, u32>) 
+    where
+    T: std::fmt::Display,
+{
+    for (key, value) in occurrence {
+        println!("{}: {}", key, value);
     }
 }
 
