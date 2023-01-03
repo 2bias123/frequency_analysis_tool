@@ -14,7 +14,7 @@ pub fn letter_occurence(content: BufReader<File>) -> (u32,BTreeMap<char, u32>) {
         match line {
             Ok(line) => {
                 let (new_wc,new_letter_occurrence) =
-                helper(Some(line), Some(letter_occurrence), wc);
+                update_letter_count(Some(line), Some(letter_occurrence), wc);
                 wc = new_wc;
                 letter_occurrence = new_letter_occurrence;
             },
@@ -26,7 +26,7 @@ pub fn letter_occurence(content: BufReader<File>) -> (u32,BTreeMap<char, u32>) {
     return (wc,letter_occurrence);
 }
 
-fn helper(line:Option<String>, letter_occurrence_input: Option<BTreeMap<char,u32>>,wc: u32) -> (u32,BTreeMap<char, u32>){
+fn update_letter_count(line:Option<String>, letter_occurrence_input: Option<BTreeMap<char,u32>>,wc: u32) -> (u32,BTreeMap<char, u32>){
     //Makes a mutable copy of the wordcount
     let mut wc = wc;
 
