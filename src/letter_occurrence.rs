@@ -1,12 +1,12 @@
 use std::fs::File;
-use std::collections::{BTreeMap};
+use std::collections::{HashMap};
 use std::io::{BufReader,BufRead};
 
 
 //This function takes a buffreader file and returns a tuple with the word count, 
 //and a map containg each letter mapped to the number of times it occurs in the file
-pub fn letter_occurence(content: BufReader<File>) -> (u32,BTreeMap<char, u32>) {
-    let mut letter_occurrence:BTreeMap<char,u32> = BTreeMap::new();
+pub fn letter_occurence(content: BufReader<File>) -> (u32,HashMap<char, u32>) {
+    let mut letter_occurrence:HashMap<char,u32> = HashMap::new();
     let mut wc:u32 = 0;
     
     for line in content.lines(){
@@ -23,10 +23,10 @@ pub fn letter_occurence(content: BufReader<File>) -> (u32,BTreeMap<char, u32>) {
         }
     }
 
-    return (wc,letter_occurrence);
+    (wc,letter_occurrence)
 }
 
-pub fn update_letter_count(line:Option<&String>, letter_occurrence_input: Option<BTreeMap<char,u32>>,wc: u32) -> (u32,BTreeMap<char, u32>){
+pub fn update_letter_count(line:Option<&String>, letter_occurrence_input: Option<HashMap<char,u32>>,wc: u32) -> (u32,HashMap<char, u32>){
     //Makes a mutable copy of the wordcount
     let mut wc = wc;
 
@@ -35,7 +35,7 @@ pub fn update_letter_count(line:Option<&String>, letter_occurrence_input: Option
     //And if it dosent it initiates a new map
     let mut letter_occurrence_map = match letter_occurrence_input {
         Some(map) => map,
-        None => BTreeMap::new(),
+        None => HashMap::new(),
     };
     //If the line option contains a line process it
     match line {
@@ -52,5 +52,4 @@ pub fn update_letter_count(line:Option<&String>, letter_occurrence_input: Option
         None => println!("There wasnt any line to read")
     }
     (wc,letter_occurrence_map)
-      
 }

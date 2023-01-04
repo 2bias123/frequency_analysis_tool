@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::collections::{BTreeMap};
+use std::collections::{HashMap};
 use std::io::{BufReader,BufRead};
 
 use crate::most_common_substring::substrings_in_line;
@@ -7,9 +7,9 @@ use crate::letter_occurrence::update_letter_count;
 
 
 //This iterates over the file and counts the occurence of every char and finds the most common substrings of a given length
-pub fn do_both(content: BufReader<File>, substring_length: usize) -> (u32, BTreeMap<char, u32>, BTreeMap<std::string::String, u32>){
-    let mut letter_occurrences: BTreeMap<char,u32> = BTreeMap::new();
-    let mut most_common_substring: BTreeMap<String, u32> = BTreeMap::new();
+pub fn do_both(content: BufReader<File>, substring_length: usize) -> (u32, HashMap<char, u32>, HashMap<std::string::String, u32>){
+    let mut letter_occurrences: HashMap<char,u32> = HashMap::new();
+    let mut most_common_substring: HashMap<String, u32> = HashMap::new();
     let mut wc:u32 = 0;
 
     for line in content.lines(){

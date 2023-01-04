@@ -1,13 +1,15 @@
-use std::{fs::File, io::{BufReader, self}, collections::BTreeMap};
+use std::{fs::File, io::{BufReader, self}, collections::HashMap};
 use clap::{Parser};
-
-use crate::most_common_substring::common_substring;
-use crate::do_both::do_both;
 
 mod letter_occurrence;
 mod most_common_substring;
 mod do_both;
 
+use crate::most_common_substring::common_substring;
+use crate::do_both::do_both;
+
+
+//Add more documentation
 #[derive(Parser)]
 struct CLI {
     //PathBuf is like a string but for file paths and work cross platform
@@ -26,54 +28,60 @@ fn main() {
 
     let file = BufReader::new(file);
 
-    let mut user_input = String::new();
+    let common = common_substring(file,3);
 
-    println!("What do you want to do with this file?");
-    println!("1: Find the most common chars");
-    println!("2: Find the most common three-letter substrings");
-    println!("3: Do both!");
+    let gun = sort_map(common);
 
-    io::stdin().read_line(&mut user_input).expect("Couldnt read line");
-    let number: i32 = user_input.trim().parse().expect("Please type one of the given numbers");
+    println!("{:?}",gun);
+    // let mut user_input = String::new();
 
-    if number == 1 {
-        let (wc,occurrences) = letter_occurrence::letter_occurence(file);
+
+    // println!("What do you want to do with this file?");
+    // println!("1: Find the most common chars");
+    // println!("2: Find the most common three-letter substrings");
+    // println!("3: Do both!");
+
+    // io::stdin().read_line(&mut user_input).expect("Couldnt read line");
+    // let number: i32 = user_input.trim().parse().expect("Please type one of the given numbers");
+
+    // if number == 1 {
+    //     let (wc,occurrences) = letter_occurrence::letter_occurence(file);
     
-        println!("The number of characters without spaces is: {}",&wc);
+    //     println!("The number of characters without spaces is: {}",&wc);
 
-        print_occurences(&occurrences);
+    //     print_occurences(&occurrences);
 
-        println!("========================================");
+    //     println!("========================================");
 
-        print_percentage(&occurrences, wc);
+    //     print_percentage(&occurrences, wc);
         
-    } else if number == 2 {
-        let substrings = common_substring(file,3);
+    // } else if number == 2 {
+    //     let substrings = common_substring(file,3);
 
-        println!("{:?}",substrings);
-    } else if number == 3{
-        let (wc,letter_occurrences,most_common_substring)
-        = do_both(file,3);
+    //     println!("{:?}",substrings);
+    // } else if number == 3{
+    //     let (wc,letter_occurrences,most_common_substring)
+    //     = do_both(file,3);
 
         
-        println!("The number of characters without spaces is: {}",&wc);
+    //     println!("The number of characters without spaces is: {}",&wc);
 
-        print_occurences(&letter_occurrences);
+    //     print_occurences(&letter_occurrences);
 
-        println!("========================================");
+    //     println!("========================================");
 
-        print_percentage(&letter_occurrences, wc);
+    //     print_percentage(&letter_occurrences, wc);
 
-        println!("========================================");
+    //     println!("========================================");
 
-        print_occurences(&most_common_substring);
+    //     print_occurences(&most_common_substring);
 
-    }
+    // }
     
    
 }
 
-fn print_occurences<T>(occurrence: &BTreeMap<T, u32>) 
+fn print_occurences<T>(occurrence: &HashMap<T, u32>) 
     where
     T: std::fmt::Display,
 {
@@ -82,7 +90,7 @@ fn print_occurences<T>(occurrence: &BTreeMap<T, u32>)
     }
 }
 
-fn print_percentage(occurrence: &BTreeMap<char, u32>,wc:u32){
+fn print_percentage(occurrence: &HashMap<char, u32>,wc:u32){
     for (char,val) in occurrence{
         let fug:f64 = per_cent(wc, &val);
         println!("{}: {:.2} %",char,fug);
@@ -91,4 +99,17 @@ fn print_percentage(occurrence: &BTreeMap<char, u32>,wc:u32){
 
 fn per_cent(whole: u32,part: &u32) -> f64{
     (*part as f64 / whole as f64) * 100.0
+}
+
+
+//Takes a hashmap and sorts it based on the values. 
+//It is the return as a vec with tuples with key as the first value and value as second 
+fn sort_map<T>(map: HashMap<T,u32>) -> Vec<(T,u32)>
+where 
+T: std::fmt::Display + Ord,
+{
+    let mut sorted_map: Vec<(T, u32)> = map.into_iter().collect();
+    sorted_map.sort_by(|a, b| a.1.cmp(&b.1));
+    sorted_map.reverse();
+    sorted_map
 }
