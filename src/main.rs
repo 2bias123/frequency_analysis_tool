@@ -105,11 +105,16 @@ fn per_cent(whole: u32,part: &u32) -> f64{
 //Takes a hashmap and sorts it based on the values. 
 //It is the return as a vec with tuples with key as the first value and value as second 
 fn sort_map<T>(map: HashMap<T,u32>) -> Vec<(T,u32)>
+//Makes sure that the generic value implements these properties
 where 
 T: std::fmt::Display + Ord,
 {
+    //This makes a new vector with the key value pairs as tuples. Map creates an iterator over the pairs
+    //The collect method converts the iterator to a Vec<(T, u32)>
     let mut sorted_map: Vec<(T, u32)> = map.into_iter().collect();
+    //The sort_by method takes a comparator to order the pairs based on the values 
     sorted_map.sort_by(|a, b| a.1.cmp(&b.1));
+    //Reverses the vector so that the highest values come first and the smallest last
     sorted_map.reverse();
     sorted_map
 }
